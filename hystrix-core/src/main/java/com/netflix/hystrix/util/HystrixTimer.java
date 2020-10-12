@@ -88,6 +88,7 @@ public class HystrixTimer {
      * @return reference to the TimerListener that allows cleanup via the <code>clear()</code> method
      */
     public Reference<TimerListener> addTimerListener(final TimerListener listener) {
+        //创建初始化线程池
         startThreadIfNeeded();
         // add the listener
 
@@ -103,6 +104,7 @@ public class HystrixTimer {
             }
         };
 
+        //以超时时间为间隔进行调度
         ScheduledFuture<?> f = executor.get().getThreadPool().scheduleAtFixedRate(r, listener.getIntervalTimeInMilliseconds(), listener.getIntervalTimeInMilliseconds(), TimeUnit.MILLISECONDS);
         return new TimerReference(listener, f);
     }

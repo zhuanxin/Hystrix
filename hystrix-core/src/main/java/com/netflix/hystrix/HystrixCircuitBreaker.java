@@ -146,6 +146,10 @@ public interface HystrixCircuitBreaker {
             }
         }
 
+        /**
+         * 判断是否允许发送请求
+         * @return
+         */
         @Override
         public boolean allowRequest() {
             if (properties.circuitBreakerForceOpen().get()) {
@@ -161,6 +165,10 @@ public interface HystrixCircuitBreaker {
             return !isOpen() || allowSingleTest();
         }
 
+        /**
+         * 判断是否允许发送请求测试服务是否恢复
+         * @return
+         */
         public boolean allowSingleTest() {
             long timeCircuitOpenedOrWasLastTested = circuitOpenedOrLastTestedTime.get();
             // 1) if the circuit is open
@@ -177,6 +185,10 @@ public interface HystrixCircuitBreaker {
             return false;
         }
 
+        /**
+         * 判断是否打开短路器
+         * @return
+         */
         @Override
         public boolean isOpen() {
             if (circuitOpen.get()) {

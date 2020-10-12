@@ -1,12 +1,12 @@
 /**
  * Copyright 2012 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,7 +99,8 @@ public interface HystrixThreadPool {
          *
          * @return {@link HystrixThreadPool} instance
          */
-        /* package */static HystrixThreadPool getInstance(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter propertiesBuilder) {
+        /* package */
+        static HystrixThreadPool getInstance(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter propertiesBuilder) {
             // get the key to use instead of using the object itself so that if people forget to implement equals/hashcode things will still work
             String key = threadPoolKey.name();
 
@@ -125,7 +126,8 @@ public interface HystrixThreadPool {
          * and causing thread-pools to initialize while also trying to shutdown.
          * </p>
          */
-        /* package */static synchronized void shutdown() {
+        /* package */
+        static synchronized void shutdown() {
             for (HystrixThreadPool pool : threadPools.values()) {
                 pool.getExecutor().shutdown();
             }
@@ -139,13 +141,14 @@ public interface HystrixThreadPool {
          * and causing thread-pools to initialize while also trying to shutdown.
          * </p>
          */
-        /* package */static synchronized void shutdown(long timeout, TimeUnit unit) {
+        /* package */
+        static synchronized void shutdown(long timeout, TimeUnit unit) {
             for (HystrixThreadPool pool : threadPools.values()) {
                 pool.getExecutor().shutdown();
             }
             for (HystrixThreadPool pool : threadPools.values()) {
                 try {
-                    while (! pool.getExecutor().awaitTermination(timeout, unit)) {
+                    while (!pool.getExecutor().awaitTermination(timeout, unit)) {
                     }
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Interrupted while waiting for thread-pools to terminate. Pools may not be correctly shutdown or cleared.", e);
@@ -200,6 +203,11 @@ public interface HystrixThreadPool {
             });
         }
 
+        /**
+         * 获取调度器逻辑
+         * @param shouldInterruptThread
+         * @return
+         */
         @Override
         public Scheduler getScheduler(Func0<Boolean> shouldInterruptThread) {
             touchConfig();
@@ -261,11 +269,12 @@ public interface HystrixThreadPool {
          */
         @Override
         public boolean isQueueSpaceAvailable() {
-            if (queueSize <= 0) {
+            if (queueSize <= 0) {//无限队列
                 // we don't have a queue so we won't look for space but instead
                 // let the thread-pool reject or not
                 return true;
             } else {
+                //判断队列大小和配置中queueSizeRejectionThreshold大小，默认值5
                 return threadPool.getQueue().size() < properties.queueSizeRejectionThreshold().get();
             }
         }

@@ -110,6 +110,7 @@ public class Hystrix {
     /* package */static Action0 startCurrentThreadExecutingCommand(HystrixCommandKey key) {
         final ConcurrentStack<HystrixCommandKey> list = currentCommand.get();
         try {
+            //将command key 入栈
             list.push(key);
         } catch (Exception e) {
             logger.warn("Unable to record command starting", e);
